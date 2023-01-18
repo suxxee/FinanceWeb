@@ -2,7 +2,6 @@
 
 var uiController = (function() 
 {
-
   var DOMstrings = 
   {
     inputType: ".add__type",
@@ -33,30 +32,89 @@ var uiController = (function()
 
 var financeController = (function() 
 {
+  var Income = function(id, description, value)
+  {
+    this.id = id;
+    this.description = description;
+    this.value = value;
+  };
 
+  var Expense = function(id, description, value)
+  {
+    this.id = id;
+    this.description = description;
+    this.value = value;
+  };
+
+  var data = {
+    items: 
+    {
+      inc: [],
+      exp: []
+    },
+
+    totals:
+    {
+      inc: 0,
+      exp: 0
+    }
+  };
+
+  return {
+    addItem: function(type, desc, val)
+    {
+      var item, id;
+
+      if(data.items[type].length === 0){
+        id = 1;
+      }
+      else{
+        id = data.items[type][data.items[type].length - 1].id + 1;
+      }
+
+      if(type === "inc"){
+        item = new Income(id, desc, val);
+      }
+      else{
+        item = new Expense(id, desc, val);
+      }
+
+      data.items[type].push(item);
+    },
+
+    seeData: function()
+    {
+      return data;
+    }
+  };
 })();
 
 //-----------------------Холбогч контроллер-----------------------
 
 var appController = (function(uiController, financeController)
 {
-
-  var DOM = uiController.getDOMstrings();
-
   var ctrlAddItem = function()
   {
-    console.log(uiController.getInput());
-  }
+    // 1. Get input data
+    var input = uiController.getInput();
+    console.log(input);
+    // 2. Send and save data to financeController
+    financeController.addItem(input.type, input.description, input.value);
+    
+
+  };
 
   var setupEventListeners = function()
   {
+    var DOM = uiController.getDOMstrings();
+
     document.querySelector(DOM.addBtn).addEventListener("click", function()
     {
       ctrlAddItem();
     });
 
     document.addEventListener("keypress", function(event){
-    if(event.keycode === 13 || event.which === 13 )
+    if(event.key === 13)
       {
        ctrlAddItem();
       }
@@ -66,7 +124,8 @@ var appController = (function(uiController, financeController)
   return {
     init: function()
      {
-       setupEventListeners();
+      console.log("Application started...");
+      setupEventListeners();
      }
   }
 
