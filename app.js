@@ -97,7 +97,7 @@ var appController = (function(uiController, financeController)
   {
     // 1. Get input data
     var input = uiController.getInput();
-    console.log(input);
+    
     // 2. Send and save data to financeController
     financeController.addItem(input.type, input.description, input.value);
     
