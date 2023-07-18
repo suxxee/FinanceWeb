@@ -23,10 +23,33 @@ var uiController = (function()
     getDOMstrings: function()
     {
       return DOMstrings;
-    }
+    },
 
+    addListItem: function(item, type)
+    {
+      //Орлого зарлагын элементийг агуулсан HTML бэлтгэнэ
+      var html, list;
+      if(type === 'inc')
+      {
+        list = ".income__list"
+        html = '<div class="item clearfix" id="income-%ID%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">%VALUE%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+      } 
+      else 
+      {
+        list = ".expenses__list"
+        html = '<div class="item clearfix" id="expense-%ID%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">%VALUE%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+      }
+      //HTML доторх орлого зарлагын утгуудыг өөрчлөнө
+      html = html.replace('%ID%', item.id);
+      html = html.replace('%DESCRIPTION%', item.description);
+      html = html.replace('%VALUE%', item.value);
+
+      //Бэлтгэсэн HTML ээ DOM-руу хийнэ
+      document.querySelector(list).insertAdjacentHTML("beforeend", html);
+
+    }
   };
-})();
+})(); 
 
 //--------------------Санхүүтэй ажиллах контроллер----------------------
 
@@ -47,17 +70,15 @@ var financeController = (function()
   };
 
   var data = {
-    items: 
-    {
-      inc: [],
-      exp: []
-    },
+    items:  {
+              inc: [],
+              exp: []
+            },
 
-    totals:
-    {
-      inc: 0,
-      exp: 0
-    }
+    totals: {
+              inc: 0,
+              exp: 0
+            }
   };
 
   return {
@@ -80,6 +101,8 @@ var financeController = (function()
       }
 
       data.items[type].push(item);
+
+      return item;
     },
 
     seeData: function()
@@ -99,15 +122,22 @@ var appController = (function(uiController, financeController)
     var input = uiController.getInput();
     
     // 2. Send and save data to financeController
-    financeController.addItem(input.type, input.description, input.value);
+    var item = financeController.addItem(input.type, input.description, input.value);
     
+    // 3. Show data on page(income & expense)
+    uiController.addListItem(item, input.type);
+
+    // 4. 
+
+    // 5. 
+
 
   };
 
   var setupEventListeners = function()
   {
     var DOM = uiController.getDOMstrings();
-
+    
     document.querySelector(DOM.addBtn).addEventListener("click", function()
     {
       ctrlAddItem();
@@ -123,7 +153,7 @@ var appController = (function(uiController, financeController)
 
   return {
     init: function()
-     {
+    {
       console.log("Application started...");
       setupEventListeners();
      }
@@ -132,4 +162,3 @@ var appController = (function(uiController, financeController)
 })(uiController, financeController);
 
 appController.init();
-// March
